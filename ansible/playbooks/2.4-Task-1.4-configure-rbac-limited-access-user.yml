@@ -1,0 +1,15 @@
+---
+- name: Configure a new API user with readonly access
+  gather_facts: no
+  hosts: check_point_gateways
+  connection: httpapi
+  tasks:
+    - name: Create API user
+      check_point.gaia.cp_gaia_user:
+        shell: no-login
+        name: apiuser
+        state: present
+        password_hash: {{ ansible_user_pw_hash }}
+        allow_access_using: ['Gaia-API', 'CLI']
+        roles: ['monitorRole']
+        uid: 200

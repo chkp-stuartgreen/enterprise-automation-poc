@@ -1,0 +1,4 @@
+---
+# tasks file for chkp_add_mds_mdls
+- name: Create MDS & MDLS if it does not exist
+  include_tasks: mgmt_api_add-mlm.yml

@@ -1,0 +1,300 @@
+- name: 'task for rule with Position: 1'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Block abuse / high risk applications
+    position: 1
+    source:
+    - Any
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Inappropriate Sites
+    user_check:
+#      interaction: Blocked Message - Access Control
+
+- name: 'task for rule with Position: 2'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Block download of executables from untrusted sites
+    position: 2
+    source:
+    - Sales
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: down
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: true
+      enable_firewall_session: false
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Corporate-GW
+    service:
+    - Uncategorized
+    user_check:
+ #     interaction: Blocked Message - Access Control
+
+- name: 'task for rule with Position: 3'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Ask user upon possible personal data exposure
+    position: 3
+    source:
+#    - Any
+    - Finance User
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: up
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Inform
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Corporate-GW
+    service:
+    - http
+#    action_settings:
+#      enable_identity_captive_portal: false
+    user_check:
+#      interaction: Access Notification
+#      frequency: once a day
+#      confirm: per application/site
+
+- name: 'task for rule with Position: 4'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: HR can access to social network applications
+    position: 4
+    source:
+    - Any
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Inform
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Facebook
+    - LinkedIn
+    - Twitter   
+#    action_settings:
+#      enable_identity_captive_portal: false
+    user_check:
+#      interaction: Access Approval
+#      frequency: once a day
+#      confirm: per application/site
+
+- name: 'task for rule with Position: 5'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: IT Department employees can access YouTube and Vimeo for work purposes
+    position: 5
+    source:
+    - IT Department
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Ask
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Vimeo
+    - YouTube
+#    action_settings:
+#      enable_identity_captive_portal: false
+    user_check:
+#      interaction: Company Policy
+#      frequency: once a day
+#      confirm: per application/site
+
+- name: 'task for rule with Position: 6'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Block specific URLs
+    position: 6
+    source:
+    - Remote Access Users
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Blocked URLs
+    
+- name: 'task for rule with Position: 7'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Block Access to Office Online Services
+    position: 7
+    source:
+    - Proxy Server
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: true
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service: Office365
+    user_check:
+#      interaction: Blocked Message - Access Control
+
+- name: 'task for rule with Position: 8'
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L7_Policy Network
+    name: Block specific categories for all employees
+    position: 8
+    source:
+    - Any
+    source_negate: false
+    destination:
+    - Internet
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: true
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Media Streams
+    - P2P File Sharing
+    - Social Networking

@@ -1,0 +1,23 @@
+---
+- name: Wait up to 30 minutes for management server to be reay
+  wait_for:
+    port: 18221
+    host: "{{ hostvars['poc-mds-a']['ansible_host'] }}"
+    timeout: 1800
+  delegate_to: localhost
+
+- name: Add admin web-admin and set permissions
+  cp_mgmt_administrator:
+    name: '{{item.name}}'
+    password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    authentication_method: check point password
+    must_change_password: false
+    multi_domain_profile: Multi-Domain Super User
+    color: aquamarine
+    auto_publish_session: false
+    state: present
+  notify: Publish handler
+  loop:
+    - name: jimo
+    - name: stuartg
+    - name: jtempleman

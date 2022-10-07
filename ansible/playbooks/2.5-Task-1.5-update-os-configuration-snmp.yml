@@ -1,0 +1,29 @@
+---
+- name: Configure SNMP on gateways
+  gather_facts: no
+  hosts: check_point_gateways
+  connection: local
+  tasks:
+    - name: Login to API
+      uri:
+        url: "https://{{ ansible_ssh_host }}/gaia_api/v1.7/login"
+        method: POST
+        body_format: json
+        body:
+          user: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
+        validate_certs: no
+      register: login_token_details
+
+    - name: Set SNMP v2c community
+      uri:
+        url: "https://{{ ansible_ssh_host }}/gaia_api/v1.7/set-snmp"
+        method: POST
+        body_format: json
+        headers:
+          X-chkp-sid: "{{ login_token_details.json.sid }}"
+        body:
+          enabled: True
+          version: any
+          read-only-community: "{{ snmp_read_community }}"
+        validate_certs: no

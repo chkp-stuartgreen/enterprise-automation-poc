@@ -1,0 +1,17 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - role: ../roles/inventory
+
+- name: Configure and deploy a shared tenancy security policy
+  connection: httpapi
+  hosts: poc-mds-a
+  gather_facts: false
+  vars:
+    state: present
+  roles:
+  - role: ../roles/chkp-add-l4-filtering-policy

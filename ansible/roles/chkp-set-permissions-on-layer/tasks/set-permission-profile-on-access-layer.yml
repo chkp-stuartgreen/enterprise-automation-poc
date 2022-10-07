@@ -1,0 +1,24 @@
+---
+- name: Get access layer UID
+  check_point.mgmt.cp_mgmt_access_layer_facts:
+    name: '{{item.name}}'
+  register: access_layer
+  loop:
+  - name: Web Control Layer
+  - name: Guest Exception layer
+
+- set_fact: 
+   web_control_layer_uid: "{{access_layer.results[0].ansible_facts['access-layer'].uid}}"
+   guest_exception_layer_uid: "{{access_layer.results[1].ansible_facts['access-layer'].uid}}"
+
+- name: Add premission profile to access layer
+  custom_set_premission_profiles_access_layer:
+    uid: '{{item.uid}}'
+    permissionsProfiles:
+      add:
+      - '{{item.permissionsProfiles}}'
+  when: web_permission_profile_uid is defined or web_permission_profile_uid is defined
+  notify: Publish handler
+  loop:
+   - { uid: "{{web_control_layer_uid}}", permissionsProfiles: "{{web_permission_profile_uid}}" }
+   - { uid: "{{guest_exception_layer_uid}}", permissionsProfiles: "{{guest_permission_profile_uid}}" }

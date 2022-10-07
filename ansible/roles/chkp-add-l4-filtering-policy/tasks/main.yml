@@ -1,0 +1,9 @@
+---
+# tasks file for chkp-add-l4-
+- include_tasks: '{{item}}'
+  loop:
+  - objects/package.yml
+  - objects/hosts.yml
+  - objects/groups.yml
+  - objects/policy-rules.yml
+  - objects/publish.yml

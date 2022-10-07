@@ -1,0 +1,46 @@
+- name: Task for Admins
+  check_point.mgmt.cp_mgmt_access_role:
+    name: Admins
+    networks: any
+    state: '{{state}}'
+
+- name: Task for Finance User
+  check_point.mgmt.cp_mgmt_access_role:
+    name: Finance User
+    state: '{{state}}'
+
+- name: Task for Guests
+  check_point.mgmt.cp_mgmt_access_role:
+    name: Guests
+    networks: any
+    state: '{{state}}'
+
+- name: Task for HR
+  check_point.mgmt.cp_mgmt_access_role:
+    name: HR
+    networks: any
+    state: '{{state}}'
+
+- name: Task for IT Department
+  check_point.mgmt.cp_mgmt_access_role:
+    name: IT Department
+    networks: any
+    state: '{{state}}'
+
+- name: Task for IT Helpdesk Users
+  check_point.mgmt.cp_mgmt_access_role:
+    name: IT Helpdesk Users
+    networks: any
+    state: '{{state}}'
+
+- name: Task for Remote Access Users
+  check_point.mgmt.cp_mgmt_access_role:
+    name: Remote Access Users
+    networks: any
+    state: '{{state}}'
+
+- name: Task for Sales
+  check_point.mgmt.cp_mgmt_access_role:
+    name: Sales
+    networks: any
+    state: '{{state}}'

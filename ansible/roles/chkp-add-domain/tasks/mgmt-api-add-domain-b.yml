@@ -1,0 +1,26 @@
+---
+- name: Check if domain-b exsists
+  check_point.mgmt.cp_mgmt_domain_facts:
+    name: domain-b
+  register: domain_b_facts
+  failed_when: false
+
+- name: Add redundant domain-b
+  check_point.mgmt.cp_mgmt_add_domain:
+    name: domain-b
+    servers:
+    - name: domain-b-managementserver-1
+      ip_address: 192.168.100.112
+      multi_domain_server: poc-mds-a
+      active: yes
+      type: management server
+    - name: domain-b-managementserver-2
+      ip_address: 192.168.100.122
+      multi_domain_server: poc-mds-b
+      active: no
+      type: management server
+  when: domain_b_facts['ansible_facts']['domain']['name'] is not defined
+
+#- name: Print all available facts
+#  ansible.builtin.debug:
+#    msg: "{{ domain_b_facts['ansible_facts']['domain']['name']}}"

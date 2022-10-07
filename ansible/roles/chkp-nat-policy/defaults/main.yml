@@ -1,0 +1,24 @@
+---
+# Credentials for cp_mgmt* modules and Settings for the Check Point httpapi plugin that provides methods to connect to Checkpoint devices over a HTTP(S)-based api.
+ansible_httpapi_use_ssl: True
+ansible_httpapi_validate_certs: False
+ansible_network_os: check_point.mgmt.checkpoint
+ansible_checkpoint_domain: domain-a
+#ansible_user: xxxx  # Change to your Check Point management admin user
+#ansible_password: xxxx # Change to your Check Point management admin password
+#ansible_api_key: xxxxxxxxxx # Optionally you can use API key instead of username and password
+
+nat_rules:
+# List of nat rules to add
+- { state: present, package: simple_open_policy, comments: Do_not_nat_between_internal_networks, 
+  position: top, enabled: true, install_on: ["Policy Targets"],  original_destination: internal networks, original_source: internal networks
+  }
+- { state: present, package: simple_open_policy, comments: give_prod_net_internet_access, 
+  position: bottom, enabled: true, install_on: ["Policy Targets"],  original_destination: All_Internet, original_source: Prod Net
+  }
+- { state: present, package: simple_open_policy, comments: give_test_net_internet_access, 
+  position: bottom, enabled: true, install_on: ["Policy Targets"],  original_destination: All_Internet, original_source: Test Net
+  }
+- { state: present, package: simple_open_policy, comments: give_stage_net_internet_access, 
+  position: bottom, enabled: true, install_on: ["Policy Targets"],  original_destination: All_Internet, original_source: Stage Net
+  }

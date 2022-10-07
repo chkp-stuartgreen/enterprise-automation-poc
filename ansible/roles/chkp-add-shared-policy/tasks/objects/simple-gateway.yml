@@ -1,0 +1,16 @@
+- name: Task for shared-gw1
+  check_point.mgmt.cp_mgmt_simple_gateway:
+    name: shared-gw1
+    ipv4_address: 198.51.123.7
+    state: '{{state}}'
+    ignore_warnings: false
+    wait_for_task: true
+    wait_for_task_timeout: '30'
+- name: Task for shared-gw2
+  check_point.mgmt.cp_mgmt_simple_gateway:
+    name: shared-gw2
+    ipv4_address: 198.51.123.5
+    state: '{{state}}'
+    ignore_warnings: false
+    wait_for_task: true
+    wait_for_task_timeout: '30'

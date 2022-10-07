@@ -1,0 +1,18 @@
+---
+## Tasks for role inventory
+- name: Create a dynamic inventory to deploy vm instances and configure them with Gaia
+  add_host:
+    hostname: "{{ item.hostname }}"
+    ansible_host: "{{ item.ansible_host }}"
+    groups: "{{item.groups}}"
+    vm_name: "{{ item.hostname }}"
+    target: "{{ item.ansible_host }}"
+    type: "{{ item.type }}"
+    ansible_user: ansibleuser
+    ansible_password: Cpwins2022!!
+  with_items:
+  - { hostname: poc-mds-a,  ansible_host: 192.168.100.110, groups: mdsm, type: primary_mds }
+  - { hostname: domain-a,  ansible_host: 192.168.100.111, groups: mdsm, type: primary_mds }
+  - { hostname: domain-b,  ansible_host: 192.168.100.112, groups: mdsm, type: primary_mds }
+  - { hostname: poc-mds-b,  ansible_host: 192.168.100.120, groups: mdsm, type: secondary_mds }
+  - { hostname: poc-mlm,  ansible_host: 192.168.100.130, groups: mdsm, type: mdls }

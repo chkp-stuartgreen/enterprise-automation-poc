@@ -1,0 +1,33 @@
+- name: add, set, or delete Check Point access rule
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L4_Policy Network
+    name: allow access from ansible control node
+    position: 1
+    source: AWS Ansible control node group
+    destination:
+    - AWS Web server
+    - AWS Mail server
+    service:
+    - http
+    - https
+    - ssh
+    action: Accept
+    track:
+      type: log
+
+- name: add, set, or delete Check Point access rule
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: '{{state}}'
+    layer: AWS_L4_Policy Network
+    name: allow SMTP access from any where
+    position: 2
+    source:
+    - Any
+    destination:
+    - AWS mail server
+    service:
+    - smtp
+    action: Accept
+    track:
+      type: log

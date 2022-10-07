@@ -1,0 +1,8 @@
+---
+- name: Add software package to management repository
+  custom_add_repository_package:
+    name: "{{item.name}}"
+    source : "{{item.source}}"
+  loop:
+#  - { name: Check_Point_R81_10_JUMBO_HF_MAIN_Bundle_T30_FULL.tgz, source: cloud}
+  - { name: Check_Point_R81_10_SKYLINE_BETA_719_MAIN_Bundle_T3_FULL.tgz, source: cloud}

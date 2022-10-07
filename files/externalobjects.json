@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "Description": "Generic Data Center Demo",
+  "objects":
+    [
+      { 
+        "name": "web-servers",
+        "description": "Web server hosts",
+        "id": "tag-web-server",
+        "ranges": ["10.1.1.1", "10.1.1.2"]
+      },
+      {
+        "name": "app-servers",
+        "description": "App server hosts",
+        "id": "tag-app-server",
+        "ranges": ["20.1.1.1", "20.1.1.2"]
+      }
+    ]
+}

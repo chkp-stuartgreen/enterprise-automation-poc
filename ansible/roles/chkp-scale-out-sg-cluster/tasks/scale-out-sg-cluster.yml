@@ -1,0 +1,35 @@
+---
+#Verify that the Security Gateway is ready before creating the object in the management server
+- name: Wait up to 15 minutes for SIC port 18211 to open
+  wait_for:
+    port: 18211
+    host: 192.168.100.13
+    delay: 5
+    timeout: 900
+  delegate_to: localhost
+
+- name: Check for cluster member3
+  check_point.mgmt.cp_mgmt_objects_facts:
+    filter: "member3"
+  register: check_cluster
+
+- name: configure Check Point Security Gateway Cluster
+  custom_set_simple_cluster_member:
+    name: cluster1
+    members:
+      add:
+      - name: member3
+        ip_address: 192.168.100.13
+        one_time_password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+        interfaces:
+        - ip_address: 192.168.100.13
+          name: eth0
+          network_mask: 255.255.255.0
+        - ip_address: 50.50.50.13
+          name: eth1
+          network_mask: 255.255.255.0
+        - ip_address: 60.60.60.13
+          name: eth2
+          network_mask: 255.255.255.0
+  notify: Publish and install handler
+  when:  check_cluster.ansible_facts.objects.total == 0

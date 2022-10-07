@@ -1,0 +1,4 @@
+---
+# tasks file chkp-set-mgmt-rbac
+- name: Set administrator RBAC
+  include_tasks: set-admin-rbac.yml

@@ -1,0 +1,8 @@
+- name: Add or delete policy package
+  check_point.mgmt.cp_mgmt_package:
+    state: '{{state}}'
+    access: true
+    color: red
+    comments: L7 filtering policy
+    name: AWS_L7_Policy
+    threat_prevention: true

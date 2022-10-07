@@ -1,0 +1,20 @@
+- name: Wait up to 15 minutes for SIC service to be ready to recive certificate
+  wait_for:
+    port: 18221
+    host: "{{ hostvars['poc-mlm']['ansible_host'] }}"
+    timeout: 900
+  delegate_to: localhost
+
+- name: Add Multi Domain Log Server
+  check_point.mgmt.cp_mgmt_mds:
+    name: poc-mlm
+    hardware: Smart-1
+    ip_address: "{{ hostvars['poc-mlm']['ansible_host'] }}"
+    ip_pool_first: 192.168.100.131
+    ip_pool_last: 192.168.100.139
+    one_time_password: "{{ hostvars['poc-mlm']['ansible_password'] }}"
+    os: gaia
+    server_type: multi-domain log server
+    color: blue
+    auto_publish_session: True
+    state: present

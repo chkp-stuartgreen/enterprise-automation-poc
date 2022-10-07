@@ -1,0 +1,24 @@
+# ansible-playbook configure-mdsm-farm_create.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ../roles/inventory
+
+# not needed for R81.20 since I can bootstrap this with user-data and cloud init
+#- name: Configure management API on Primary MDS to accept connections from any host
+#  hosts: poc-mds-a
+#  connection: httpapi
+#  gather_facts: false
+#  roles:
+#    - role: ../roles/enable-mgmt-api
+
+- name:  Establish SIC with Secondary MDS and add domain GUI client access
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  roles:
+  - role: ../roles/chkp-add-administrators
+  - role: ../roles/chkp-add-mds

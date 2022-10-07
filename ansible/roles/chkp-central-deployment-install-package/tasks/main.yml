@@ -1,0 +1,4 @@
+---
+# tasks file for chkp-central-deployment
+- include_tasks: chkp-install-software-package.yml
+  

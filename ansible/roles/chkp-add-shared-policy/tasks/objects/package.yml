@@ -1,0 +1,20 @@
+- name: Task for Shared_Policy
+  check_point.mgmt.cp_mgmt_package:
+    name: Shared_Policy
+    access: true
+    threat_prevention: true
+    desktop_security: false
+    qos: false
+    color: black
+    comments: ''
+    installation_targets:
+    - shared-gw1
+    - shared-gw2
+    qos_policy_type: recommended
+    tags: []
+    vpn_traditional_mode: false
+    state: '{{state}}'
+    ignore_warnings: false
+    ignore_errors: false
+    wait_for_task: true
+    wait_for_task_timeout: '30'

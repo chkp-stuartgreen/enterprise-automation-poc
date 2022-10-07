@@ -1,0 +1,36 @@
+- name: SOC permission profile
+  check_point.mgmt.cp_mgmt_domain_permissions_profile:
+    state: '{{item.state}}'
+    name: '{{item.name}}'
+    permission_type: '{{item.permission_type}}'
+    access_control:
+      show_policy: false
+      dlp_policy: disabled
+      geo_control_policy: disabled
+      nat_policy: disabled
+      qos_policy: disabled
+      access_control_objects_and_settings: disabled
+      app_control_and_url_filtering_update: false
+      install_policy: false
+    threat_prevention:
+      policy_layers: '{{item.tp_policy_layers | default(omit)}}'
+      edit_layers: '{{item.tp_edit_layers | default(omit)}}'
+      edit_settings: '{{item.tp_edit_settings | default(omit)}}'
+      policy_exceptions: '{{item.tp_policy_exceptions | default(omit)}}'
+      profiles: '{{item.tp_profiles | default(omit)}}'
+      protections: '{{item.tp_protections | default(omit)}}'
+      install_policy: '{{item.tp_install_policy | default(omit)}}'
+      ips_update: '{{item.tp_ips_update| default(omit)}}'
+    others:
+      https_inspection: '{{item.ot_https_inspection | default(omit)}}'
+    comments: '{{item.comments}}'
+    color: '{{item.color}}'
+  notify: Publish handler
+  loop:
+  - { state: present, name: SOC signature manager, permission_type: customized, 
+      ac_show_policy: false,
+      tp_policy_layers: disabled, tp_edit_settings: false, tp_policy_exceptions: disabled, tp_profiles: read,
+      tp_protections: write, tp_install_policy: true, tp_ips_update: true,
+      ot_https_inspection: disabled,
+      comments: Restrict Restrict SOC admin to make changes to signatures, color: pink, 
+    }

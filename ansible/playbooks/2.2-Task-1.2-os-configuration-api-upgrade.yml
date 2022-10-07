@@ -1,0 +1,60 @@
+---
+- name: Copy and install Gaia API update
+  hosts: check_point_gateways
+  gather_facts: no
+  tasks:
+    - name: Check API version
+      block:
+        - name: Wait for port 22 to be available on GWs
+          ansible.builtin.wait_for:
+            host: "{{ ansible_ssh_host }}"
+            port: 22
+          connection: local
+        - name: Wait for Ansibleuser to be configured correcltly
+          raw: show user ansibleuser
+          vars:
+            ansible_ssh_user: admin
+          retries: 12
+          delay: 10
+          register: show_admin_out
+          until: show_admin_out.stdout is not search('No database items for user')
+          
+        - name: Check the local gaia API version
+          raw: 'gaia_api version'
+          register: current_api_version
+        
+
+
+    - debug:
+        var: current_api_version.stdout | float
+    - name: Upgrade if necessary
+      block:
+        - name: Remove existing hotfix directories
+          file:
+            state: absent
+            path: "/home/ansibleuser/api_hotfix_1.7/"
+        - name: Create folder for API hotfix
+          raw: 'mkdir api_hotfix_1.7'
+        - name: Get HFA from lab file server
+          raw: "curl_cli -o api_hotfix_1.7/api.tgz {{ web_file_host }}/Check_Point_gaia_api.tgz"
+        - name: Extract Gaia API package
+          raw: 'tar -zxf api_hotfix_1.7/api.tgz -C api_hotfix_1.7/'
+        - name: Install Gaia API update
+          raw: 'cd api_hotfix_1.7 && ./install_gaia_api.sh'
+      when: current_api_version.stdout is version('1.7', '<')
+
+    - name: Configure NTP
+      block:
+        - name: Wait for API upgrade to complete
+          pause:
+            seconds: 30
+        - name: Set NTP server to lab AD
+          connection: httpapi
+          check_point.gaia.cp_gaia_ntp:
+            enabled: True
+            servers: [{"version": 3, "type": "primary", "address": "{{ ntp_host }}"}]
+        - name: Run ntpupdate
+          raw: "mplane && ntpdate -u {{ ntp_host }}"
+
+      
+    

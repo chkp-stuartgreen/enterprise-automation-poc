@@ -1,0 +1,252 @@
+---
+
+- name: Configure CloudGuard Controller objects
+  hosts: check_point_mds
+  vars:
+    ansible_checkpoint_domain: domain-b
+  gather_facts: false
+  connection: httpapi
+  tasks:
+    - name: Lower publish flag until needed
+      set_fact:
+        publish_needed: false
+
+    - name: Login to API
+      uri:
+        url: "https://{{ ansible_ssh_host }}/web_api/v1.7/login"
+        method: POST
+        body_format: json
+        body:
+          user: "{{ ansible_user }}"
+          password: "{{ ansible_password }}"
+          domain: "{{ ansible_checkpoint_domain }}"
+        validate_certs: no
+      register: login_token_details
+
+    - name: Check existing objects
+      uri:
+        url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-data-center-servers"
+        method: POST
+        body_format: json
+        body: {}
+        headers:
+          X-chkp-sid: "{{ login_token_details.json.sid }}"
+        validate_certs: no
+      register: dc_servers
+
+
+    - name: Create Cisco APIC object in POC lab
+      block:
+        - name: Create object
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/add-data-center-server"
+            method: POST
+            body_format: json
+            body:
+              name: DC_Cisco_APIC
+              type: aci
+              urls: https://172.23.23.141
+              username: admin
+              password: YOURPASSWORD
+              unsafe-auto-accept: true
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+            validate_certs: no
+          
+          register: cisco_task
+          changed_when: cisco_task.status == 200
+      
+        - name: Set publish flag to true
+          set_fact:
+            publish_needed: true
+    
+        - name: Wait for tasks to complete
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-task"
+            validate_certs: no
+            method: POST
+            body_format: json
+            body:
+              task-id: "{{ cisco_task.json['task-id'] }}"
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+          retries: 20
+          delay: 3
+          register: taskoutput
+          until: taskoutput.json.tasks[0]['progress-percentage'] == 100
+          failed_when: 
+            - taskoutput.json.tasks[0]['progress-percentage'] == 100
+            - taskoutput.json.tasks[0]['status'] != "succeeded"
+      when: dc_servers.json is not search("DC_Cisco_APIC")
+
+    - name: Create VMWare object
+      block:
+        - name: Create VMware obj if needed
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/add-data-center-server"
+            method: POST
+            body_format: json
+            body:
+              name: DC_VMWare_POC
+              type: vcenter
+              hostname: 192.168.100.10
+              username: administrator@vsphere.local
+              password: YOURVSPHEREPASSWORD
+              unsafe-auto-accept: true
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+            validate_certs: no
+          register: vmware_task
+          changed_when: vmware_task.status == 200
+        
+        - name: Set publish flag to true
+          set_fact:
+            publish_needed: true
+        
+        - name: Wait for tasks to complete
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-task"
+            validate_certs: no
+            method: POST
+            body_format: json
+            body:
+              task-id: "{{ vmware_task.json['task-id'] }}"
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+          retries: 20
+          delay: 3
+          register: taskoutput
+          until: taskoutput.json.tasks[0]['progress-percentage'] == 100
+          failed_when: 
+            - taskoutput.json.tasks[0]['progress-percentage'] == 100
+            - taskoutput.json.tasks[0]['status'] != "succeeded"
+      when: dc_servers.json is not search("DC_VMWare_POC")
+
+    - name: Create Azure object in POC lab
+      block:
+        - name: Create Azure Obj if needed 
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/add-data-center-server"
+            method: POST
+            body_format: json
+            body:
+              name: AzureCGC
+              type: azure
+              authentication-method: service-principal-authentication
+              application-id: YOURAPPLICATIONID
+              application-key: YOURSECRETKEY
+              directory-id: YOURDIRECTORYID
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+            validate_certs: no
+          register: azure_task
+          changed_when: azure_task.status == 200
+
+        - name: Set publish flag to true
+          set_fact:
+            publish_needed: true
+
+        - name: Wait for tasks to complete
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-task"
+            validate_certs: no
+            method: POST
+            body_format: json
+            body:
+              task-id: "{{ azure_task.json['task-id'] }}"
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+          retries: 20
+          delay: 3
+          register: taskoutput
+          until: taskoutput.json.tasks[0]['progress-percentage'] == 100
+          failed_when: 
+            - taskoutput.json.tasks[0]['progress-percentage'] == 100
+            - taskoutput.json.tasks[0]['status'] != "succeeded"
+      when: dc_servers.json is not search("AzureCGC")
+
+    - name: Create Generic DC object in POC lab
+      block:
+        - name: Create GDC onbject from 100.53 server
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/add-data-center-server"
+            method: POST
+            body_format: json
+            body:
+              name: GenericDC
+              type: generic
+              url: "{{ web_file_host}}/externalobjects.json"
+              interval: 600
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+            validate_certs: no
+          register: gdc_task
+          changed_when: gdc_task.status == 200
+
+        - name: Set publish flag to true
+          set_fact:
+            publish_needed: true
+
+        - name: Wait for tasks to complete
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-task"
+            validate_certs: no
+            method: POST
+            body_format: json
+            body:
+              task-id: "{{ gdc_task.json['task-id'] }}"
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+          retries: 20
+          delay: 3
+          register: taskoutput
+          until: taskoutput.json.tasks[0]['progress-percentage'] == 100
+          failed_when: 
+            - taskoutput.json.tasks[0]['progress-percentage'] == 100
+            - taskoutput.json.tasks[0]['status'] != "succeeded"
+      when: dc_servers.json is not search("GenericDC")
+
+    - name: Publish and wait for session
+      block:
+        - name: Publish session
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/publish"
+            method: POST
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+            body_format: json
+            body: "{}"
+            validate_certs: no
+
+          register: publish_facts
+          changed_when: publish_facts.status == 200
+
+        - name: Wait for publish tasks to complete
+          uri:
+            url: "https://{{ ansible_ssh_host }}/web_api/v1.7/show-task"
+            validate_certs: no
+            method: POST
+            body_format: json
+            body:
+              task-id: "{{ publish_facts.json['task-id'] }}"
+            headers:
+              X-chkp-sid: "{{ login_token_details.json.sid }}"
+          retries: 20
+          delay: 3
+          register: taskoutput
+          until: taskoutput.json.tasks[0]['progress-percentage'] == 100
+          failed_when: 
+            - taskoutput.json.tasks[0]['progress-percentage'] == 100
+            - taskoutput.json.tasks[0]['status'] != "succeeded"
+      when: publish_needed == true
+
+    - name: Logout
+      uri:
+        url: "https://{{ ansible_ssh_host }}/web_api/v1.7/logout"
+        method: POST
+        headers:
+          X-chkp-sid:  "{{ login_token_details.json.sid }}"
+        body_format: json
+        body: "{}"
+        validate_certs: no
+        

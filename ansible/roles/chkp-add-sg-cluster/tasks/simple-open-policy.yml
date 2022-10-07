@@ -1,0 +1,80 @@
+---
+# Add or delete security policy package from Check Point management server
+- name: configure simple open policy package
+  check_point.mgmt.cp_mgmt_package:
+    state: "{{state}}"
+    access: "{{item.access}}"
+    color: "{{item.color}}"
+    comments: "{{item.comments}}"
+    name: "{{item.name}}"
+    threat_prevention: "{{item.threat_prevention}}"
+  notify: Publish and install handler
+  loop:
+  #Policy packages to add
+  - { state: present, name: simple_open_policy, comments: Allow all traffic, color: forest green, threat_prevention: true, access: true }
+
+- name: Check Point group object internal networks
+  check_point.mgmt.cp_mgmt_group:
+    state: present
+    name: internal networks
+    color: forest green
+  notify: Publish and install handler
+
+- name: configure host {{item.name}}
+  check_point.mgmt.cp_mgmt_host:
+    state: present
+    color: "{{item.color}}"
+    name: "{{item.name}}"
+    ip_address: "{{item.ip}}"
+  notify: Publish and install handler
+  loop:
+  # List of hosts to add
+  - { state: present, name: search-host-1, ip: 172.123.123.1, color: forest green, }
+  - { state: present, name: search-host-2, ip: 172.123.123.2, color: orange, }
+
+# Add or delete network object in Check Point management server
+- name: add-network or delete-network
+  check_point.mgmt.cp_mgmt_network:
+    state: present
+    color: "{{item.color}}"
+    groups: "{{item.groups}}"
+    name: "{{item.name}}"
+    subnet: "{{ item.subnet | ansible.utils.ipaddr('network') }}"
+    subnet_mask: "{{ item.subnet | ansible.utils.ipaddr('netmask') }}"
+  notify: Publish and install handler
+  loop:
+  # List of networks to add
+  - { state: present, name: 'Prod Net', subnet: 172.21.22.0/24, groups: ["internal networks"], color: forest green}
+  - { state: present, name: 'Test Net', subnet: 192.168.24.0/24, groups: ["internal networks"], color: red}
+  - { state: present, name: 'Stage Net', subnet: 10.1.1.0/24, groups: ["internal networks"], color: orange}
+  - { state: present, name: 'Internal Net', subnet: 50.50.50.0/24, groups: ["internal networks"], color: forest green}
+  - { state: present, name: 'External Net', subnet: 172.23.23.0/24, groups: ["internal networks"], color: red}
+  - { state: present, name: 'Mgmt Net', subnet: 192.168.100.0/24, groups: ["internal networks"], color: blue}
+
+# Add access policy rule in Check Point management server
+- name: Configure access rule  {{item.position}}
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: "{{state}}"
+    layer: "{{item.layer}}"
+    name: "{{item.name}}"
+    position: "{{item.position}}"
+    source: "{{item.source}}"
+    destination: "{{item.destination}}"
+    service: "{{item.service}}"
+    action: "{{item.action}}"
+    track:
+      type: "{{item.track_type}}"
+  notify: Publish and install handler
+  loop:
+  # List of rules to add
+  - { state: present, layer: simple_open_policy Network, name: Rule 1, 
+    position: 1, source: search-host-1, destination: ["Any"], service: ["Any"], action: Accept, track_type: log 
+    }
+  - { state: present, layer: simple_open_policy Network, name: Rule 2, 
+    position: 2, source: search-host-2, destination: ["Any"], service: ["Any"], action: Accept, track_type: log 
+    }
+  # Change Cleanup rule to allow traffic between internal networks
+  - { state: present, layer: simple_open_policy Network, name: Cleanup rule, 
+    position: 3, source: ["Internal Net", "External Net","Mgmt Net"], destination: ["Internal Net", "External Net","Mgmt Net"], service: ["Any"], action: Accept, track_type: log 
+    }
+

@@ -1,0 +1,3 @@
+---
+# tasks file for chkp-add-log-exporter
+- include_tasks: gaia-api-runs-script-add-log-exporter.yml

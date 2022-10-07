@@ -1,0 +1,3 @@
+---
+- name: Publish Current Changes
+  check_point.mgmt.cp_mgmt_publish:

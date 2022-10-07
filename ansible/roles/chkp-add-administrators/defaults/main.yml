@@ -1,0 +1,9 @@
+---
+# Credentials for cp_mgmt* modules and Settings for the Check Point httpapi plugin that provides methods to connect to Checkpoint devices over a HTTP(S)-based api.
+ansible_httpapi_use_ssl: True
+ansible_httpapi_validate_certs: False
+ansible_network_os: check_point.mgmt.checkpoint
+ansible_checkpoint_domain: System Data
+#ansible_user: xxxx  # Change to your Check Point management admin user
+#ansible_password: xxxx # Change to your Check Point management admin password
+#ansible_api_key: xxxxxxxxxx # Optionally you can use API key instead of username and password

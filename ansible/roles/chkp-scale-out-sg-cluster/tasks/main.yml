@@ -1,0 +1,4 @@
+---
+# tasks file for chkp-scale-out-sg-cluster
+- include_tasks: scale-out-sg-cluster.yml
+  

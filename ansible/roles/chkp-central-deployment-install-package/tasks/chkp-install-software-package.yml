@@ -1,0 +1,25 @@
+---
+# Task to install software package on Check Point gateways, clusters and SMB devices
+# The variables used is defined in ../defaults/main.yml of this role.
+- name: install software package
+  check_point.mgmt.cp_mgmt_install_software_package:
+    targets: "{{item.targets}}"
+    name: "{{item.name}}"
+    method: install
+    package_location: central
+    cluster_installation_settings:
+      cluster_delay: 5
+      cluster_strategy: preserve-connectivity-when-possible
+  notify: Publish handler
+  register: install_package
+  loop:
+#  - {targets: cluster1, name: Check_Point_R81_10_JUMBO_HF_MAIN_Bundle_T30_FULL.tgz, }
+  - {targets: cluster1, name: Check_Point_R81_10_SKYLINE_BETA_719_MAIN_Bundle_T3_FULL.tgz, }
+
+- debug:
+    var: install_package
+
+
+#- name: Print all available facts
+#  ansible.builtin.debug:
+#    msg: "{{ ansible_facts['domain']['name'] }}"

@@ -1,0 +1,8 @@
+---
+# tasks file for chkp-add-domain
+- include_tasks: '{{tasks}}'
+  loop_control:
+    loop_var: tasks
+  loop:
+  - configure-domain-permission-profile.yml
+  - configure-administrators.yml

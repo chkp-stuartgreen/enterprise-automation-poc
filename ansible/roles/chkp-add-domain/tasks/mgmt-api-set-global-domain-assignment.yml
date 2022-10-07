@@ -1,0 +1,84 @@
+---
+# Login to Check Point Management API for a specific domain
+- name: Login to {{ansible_checkpoint_domain}}
+  uri:
+     url: "https://{{ ansible_host }}/web_api/login"
+     validate_certs: false
+     method: POST
+     body_format: json
+     body: 
+           '{ 
+              "user"     : "{{ ansible_user }}", 
+              "password" : "{{ ansible_password }}", 
+              "domain"   :  "{{ ansible_checkpoint_domain }}"
+            }'
+  register: login_facts
+
+- set_fact:
+     sid: "{{ login_facts.json.sid }}"
+
+
+- name: verify if global assignment exsists
+  uri:
+     url: "https://{{ ansible_host }}/web_api/show-global-assignments"
+     validate_certs: false
+     method: POST
+     body_format: json
+     headers:
+       X-chkp-sid : "{{sid}}"
+     body: '{ }'
+  register: show_global_assignments_facts
+
+- name: Configure global assignment for domains
+  uri:
+     url: "https://{{ ansible_host }}/web_api/add-global-assignment"
+     validate_certs: false
+     method: POST
+     body_format: json
+     headers :
+       X-chkp-sid : "{{ sid }}"
+     body: 
+           '{
+               "global-domain" : "Global",
+               "dependent-domain" : "{{item.domain}}",
+               "global-access-policy" : "{{item.global_access_policy}}",
+               "global-threat-prevention-policy" : "",
+               "manage-protection-actions" : false
+            }'
+  register: global_assignment_facts
+  changed_when: global_assignment_facts.status == 200
+  when:  show_global_assignments_facts.json.total == 0
+  loop:
+  # List of domains and global policy to assign
+  - { state: present, domain: domain-a, global_access_policy: overarching_ent_lvl_pol }
+  - { state: present, domain: domain-b, global_access_policy: overarching_ent_lvl_pol }
+
+# Publish changes
+- name: API Publish
+  uri:
+     url: "https://{{ ansible_host }}/web_api/publish"
+     validate_certs: false
+     method: POST
+     body_format: json
+     body: '{}'
+     headers : 
+       X-chkp-sid : "{{ sid }}"
+  register: publish_facts
+  changed_when: publish_facts.status == 200
+
+- name: Logout
+  uri:
+     url: "https://{{ ansible_host }}/web_api/logout"
+     validate_certs: false
+     method: POST
+     body_format: json
+     body: '{}'
+     headers : 
+       X-chkp-sid : "{{ sid }}"
+
+- name: Assign the global-assignment
+  cp_mgmt_assign_global_assignment:
+    dependent_domains: 
+    - domain-a
+    - domain-b
+    global_domains: Global

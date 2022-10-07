@@ -1,0 +1,10 @@
+---
+# tasks file for chkp-add-domain
+- include_tasks: '{{tasks}}'
+  loop_control:
+    loop_var: tasks
+  loop:
+  - mgmt-api-add-domain-a.yml
+  - mgmt-api-add-domain-b.yml
+#  - mgmt-api-set-global-domain-assignment.yml
+  - set-global-domain-assignment.yml # Disabled due to bug in equals API on R81.10 any JHF.

@@ -1,0 +1,16 @@
+---
+- name: Add admin dmnlvl-admin and set permissions
+  cp_mgmt_administrator:
+    name: dmnlvl-admin
+    password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    authentication_method: check point password
+    must_change_password: false
+    multi_domain_profile: Domain Level Only
+    permissions_profile_list:
+    -  domain: domain-a
+       profile: read write all
+    -  domain: domain-b
+       profile: read only all
+    color: gold
+    auto_publish_session: True
+    state: present

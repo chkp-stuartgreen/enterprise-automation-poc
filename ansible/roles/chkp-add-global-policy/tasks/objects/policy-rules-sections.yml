@@ -1,0 +1,11 @@
+- name: set-access-section on top of GW Access in Branch_Office_Policy Network
+  check_point.mgmt.cp_mgmt_access_section:
+    state: "{{state}}"
+    layer: "{{item.layer}}"
+    name: "{{item.name}}"
+    position: "{{item.position}}"
+  notify: Publish and install handler
+  loop:
+  # List of sections to add
+  - { state: present, layer: overarching_ent_lvl_pol Network,  name: Globally control common services, position: 1, }
+  - { state: present, layer: overarching_ent_lvl_pol Network,  name: Globally drop all non-explicitly accepted traffic, position: 7, }

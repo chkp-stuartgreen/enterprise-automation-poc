@@ -1,0 +1,41 @@
+---
+- name: Enable MDPS separation
+  hosts: check_point_gateways
+  gather_facts: no
+  tasks:
+    - name: Check for GW connectitivty via SSH
+      block:
+        - name: Wait for port 22 to be available on GWs
+          ansible.builtin.wait_for:
+            port: 22
+            host: "{{ ansible_ssh_host }}"
+          connection: local
+        - name: Is MDPS enabled
+          raw: 'dplane'
+          register: dplane_output
+    - name: Enable MDPS
+      block:
+        - name: Run MDPS set mgmt interface eth0
+          raw: "curl_cli -o mdps.sh {{ web_file_host}}/mdps.sh"
+        - name: Make script executable
+          raw: 'chmod +x mdps.sh'
+        - name: Turn on MDPS separation via script
+          raw: 'nohup ./mdps.sh'
+          timeout: 10
+          ignore_errors: True
+        - name: Wait for shutdown of port 22 (host rebooting)
+          ansible.builtin.wait_for:
+            host: "{{ ansible_ssh_host }}"
+            port: 22
+            state: stopped
+            timeout: 100
+          connection: local
+        - name: Wait for port 22 to be available on GWs (host up)
+          ansible.builtin.wait_for:
+            port: 22
+            host: "{{ ansible_ssh_host }}"
+            timeout:  300
+          connection: local
+      when: dplane_output.stdout is search("disabled")
+      
+

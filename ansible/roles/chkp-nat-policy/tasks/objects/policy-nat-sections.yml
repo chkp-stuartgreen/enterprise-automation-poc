@@ -1,0 +1,11 @@
+- name: set sections for nat rules
+  check_point.mgmt.cp_mgmt_nat_section:
+    state: "{{state}}"
+    package: "{{item.package}}"
+    name: "{{item.name}}"
+    position: "{{item.position}}"
+  notify: Publish and install handler
+  loop:
+  # List of sections to add
+  - { state: present, package: simple_open_policy,  name: Do not nat between internal networks, position: 1, }
+  - { state: present, package: simple_open_policy,  name: Hide Nat internal networks, position: 5, }

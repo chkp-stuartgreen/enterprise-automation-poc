@@ -1,0 +1,3 @@
+---
+# tasks file for chkp_add_mds_mdls
+- import_tasks: gaia-api-runs-script-activate-mgmt-api.yml

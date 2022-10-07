@@ -1,0 +1,11 @@
+---
+# Activate log exporter to export logs to IBM QRadar SIEM
+- name: Run script - Activate log exporter to export logs to IBM QRadar SIEM
+  check_point.gaia.cp_gaia_run_script:
+    script: source /etc/profile; cp_log_export add name ibm domain-server 192.168.100.111 target-server 192.168.100.20 target-port 514 protocol tcp format leef read-mode semi-unified --apply-now
+    description: Activate log exporter to export logs to IBM QRadar SIEM
+    wait_for_task: True
+  register: api_task
+
+- debug:
+    msg: "{{ api_task.run_script.tasks[0]['task-details'][0]['output'] | b64decode }}"

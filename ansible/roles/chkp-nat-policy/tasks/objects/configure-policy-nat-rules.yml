@@ -1,0 +1,37 @@
+---
+- name: Configure nat rule '{{item.position}}' 
+  cp_mgmt_nat_rule:
+    state: '{{state}}'
+    position: '{{item.position}}'
+    name: '{{item.name}}'
+    comments: '{{item.comments}}'
+    enabled: '{{item.enabled}}'
+    install_on: '{{item.install_on}}'
+    original_source: '{{item.original_source}}'
+    original_destination: '{{item.original_destination}}'
+    original_service: '{{item.original_service}}'
+    translated_source: '{{item.translated_source | default(omit)}}'
+    method: '{{item.method | default(omit)}}'
+    package: '{{item.package}}'
+  notify: Publish and install handler
+  loop:
+  # List of nat rules to add
+  - { state: present, package: simple_open_policy, comments: Do_not_nat_between_internal_networks, 
+      position: top, name: No nat, enabled: true, install_on: ["Policy Targets"],
+      original_destination: internal networks, original_source: internal networks, original_service: Any
+    }
+  - { state: present, package: simple_open_policy, comments: Give_prod_net_internet_access, 
+      position: 4, name: Nat Prod Net, enabled: true, install_on: ["Policy Targets"],
+      original_destination: All_Internet, original_source: Prod Net, original_service: Any,
+      translated_source: cluster1, method: hide
+    }
+  - { state: present, package: simple_open_policy, comments: Give_test_net_internet_access, 
+      position: 5, name: Nat Test Net, enabled: true, install_on: ["Policy Targets"],
+      original_source: Test Net, original_destination: All_Internet, original_service: ssh,
+      translated_source: cluster1, method: hide
+    }
+  - { state: present, package: simple_open_policy, comments: Give_stage_net_internet_access, 
+      position: 6, name: Nat Stage Net, enabled: true, install_on: ["Policy Targets"],
+      original_destination: All_Internet, original_source: Stage Net, original_service: ssh,
+      translated_source: cluster1, method: hide
+    }

@@ -1,0 +1,26 @@
+---
+# tasks file for chkp-add-demo-mode-policy
+- include_tasks: '{{item}}'
+  loop:
+  - objects/simple-gateway.yml
+  - objects/address-range.yml
+  - objects/application-site.yml
+  - objects/dns-domain.yml
+  - objects/dynamic-object.yml
+  - objects/host.yml
+  - objects/network.yml
+  - objects/package.yml
+  - objects/security-zone.yml
+  - objects/service-group.yml
+  - objects/service-tcp.yml
+  - objects/tag.yml
+  - objects/time.yml
+  - objects/vpn-community-meshed.yml
+  - objects/access-layer.yml
+  - objects/access-role.yml
+  - objects/group.yml
+  - objects/threat-layer.yml
+  - objects/application-site-group.yml
+  - objects/policy-rules.yml
+  - objects/policy-rules-sections.yml
+  - objects/publish.yml

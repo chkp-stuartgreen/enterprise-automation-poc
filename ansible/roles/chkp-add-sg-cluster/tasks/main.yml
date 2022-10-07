@@ -1,0 +1,5 @@
+---
+# tasks file for chkp-add-sg-cluster
+- include_tasks: add-sg-cluster.yml
+- include_tasks: simple-open-policy.yml
+  

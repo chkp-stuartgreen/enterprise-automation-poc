@@ -1,0 +1,24 @@
+- name: Retrieve policy package
+  hosts: check_point_mds
+  vars:
+    ansible_checkpoint_domain: domain-a
+  connection: httpapi
+  tasks:
+    - name: Retrieve access rule facts
+      check_point.mgmt.cp_mgmt_access_rule_facts:
+        name: simple_open_policy Network
+        details_level: standard
+        use_object_dictionary: true
+        # The search host parameter can be provided at runtime with -e 'search_host=1.2.3.4'
+        filter: "{{ search_host }}"
+        filter_settings:
+          search_mode: packet
+          packet_search_settings:
+            match_on_any: false
+      ignore_errors: true
+      register: rulebase_findings
+
+    - name: Print policy findings
+      copy: 
+        content: "{{ rulebase_findings| to_nice_json }}"
+        dest: /tmp/policy.json

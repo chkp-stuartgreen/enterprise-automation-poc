@@ -1,0 +1,17 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ../roles/inventory
+
+- name:  Scale-out Security Gateway cluster in domain a
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  vars:
+    state: present
+  roles:
+  - role: ../roles/chkp-scale-out-sg-cluster

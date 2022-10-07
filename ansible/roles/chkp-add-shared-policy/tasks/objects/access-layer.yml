@@ -1,0 +1,39 @@
+- name: Task for Guest Exception Layer
+  check_point.mgmt.cp_mgmt_access_layer:
+    name: Guest Exception Layer
+    shared: true
+    applications_and_url_filtering: true
+    content_awareness: true
+    mobile_access: false
+    detect_using_x_forward_for: false
+    firewall: true
+    implicit_cleanup_action: drop
+    comments: ''
+    color: black
+    tags: []
+    state: '{{state}}'
+    ignore_warnings: false
+    ignore_errors: false
+    wait_for_task: true
+    wait_for_task_timeout: '30'
+    #add_default_rule: false
+
+- name: Task for Web Control Layer
+  check_point.mgmt.cp_mgmt_access_layer:
+    name: Web Control Layer
+    shared: true
+    applications_and_url_filtering: true
+    content_awareness: true
+    mobile_access: false
+    detect_using_x_forward_for: false
+    firewall: true
+    implicit_cleanup_action: drop
+    comments: ''
+    color: black
+    tags: []
+    state: '{{state}}'
+    ignore_warnings: false
+    ignore_errors: false
+    wait_for_task: true
+    wait_for_task_timeout: '30'
+    #add_default_rule: false

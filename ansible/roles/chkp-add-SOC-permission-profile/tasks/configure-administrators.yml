@@ -1,0 +1,19 @@
+---
+- name: Add admin soc-admin and set permissions
+  check_point.mgmt.cp_mgmt_administrator:
+    name: soc-admin
+    password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    authentication_method: check point password
+    must_change_password: false
+    multi_domain_profile: Domain Manager
+    permissions_profile_list:
+    -  domain: domain-a
+       profile: SOC signature manager
+    -  domain: domain-b
+       profile: SOC signature manager
+    -  domain: All Global Domains
+       profile: SOC signature manager
+    color: pink
+    auto_publish_session: false
+    state: present
+  notify: Publish handler

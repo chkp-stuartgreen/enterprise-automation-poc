@@ -1,0 +1,15 @@
+---
+# Add or delete network object in Check Point management server
+- name: add-network or delete-network
+  check_point.mgmt.cp_mgmt_network:
+    state: "{{state}}"
+    color: "{{item.color}}"
+#    groups: "{{item.groups}}"
+    name: "{{item.name}}"
+    subnet: "{{ item.subnet | ansible.utils.ipaddr('network') }}"
+    subnet_mask: "{{ item.subnet | ansible.utils.ipaddr('netmask') }}"
+  notify: Publish and install handler
+  loop:
+  # List of networks to add
+  - { state: present, name: 'g-DMZ-net-111', subnet: 172.222.111.0/24, groups: ["DMZ_nets"], color: orange}
+  - { state: present, name: 'g-Internal-net-55', subnet: 50.50.55.0/24, groups: ["DMZ_nets"], color: cyan}

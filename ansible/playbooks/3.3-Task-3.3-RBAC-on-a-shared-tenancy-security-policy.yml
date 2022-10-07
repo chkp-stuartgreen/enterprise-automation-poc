@@ -1,0 +1,22 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ../roles/inventory
+
+- name:  create permission profiles
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  roles:
+  - role: ../roles/chkp-add-permission-profile
+
+- name:  Assign permission profiles to access layer
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  roles:
+  - role: ../roles/chkp-set-permissions-on-layer

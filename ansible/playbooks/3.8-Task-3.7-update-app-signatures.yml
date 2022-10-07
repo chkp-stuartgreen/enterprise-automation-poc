@@ -1,0 +1,14 @@
+---
+- name: Run an IPS / Signature update
+  hosts: check_point_mds
+  connection: httpapi
+  vars:
+    ansible_checkpoint_domain: domain-b
+    ansible_user: soc-admin
+  gather_facts: no
+  tasks:
+    - name: Run IPS update
+      check_point.mgmt.cp_mgmt_run_ips_update:
+      register: ips_output
+    - debug:
+        msg: "{{ ips_output }}"

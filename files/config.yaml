@@ -1,0 +1,36 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        tls:
+          client_ca_file: /opt/CPotelcol/certs/collector.crt
+          cert_file: /opt/CPotelcol/certs/collector.crt
+          key_file: /opt/CPotelcol/certs/collector.key
+
+exporters:
+  prometheusremotewrite:
+    endpoint: "http://192.168.100.23:9090/api/v1/write"
+    #tls:
+      #cert_file: /tmp/mycerts/promexport.crt
+      #key_file: /tmp/mycerts/promexport.key
+      #ca_file: /tmp/mycerts/prometheus.crt
+    external_labels:
+     instance: EXTLABELNAME
+     job: skyline
+    resource_to_telemetry_conversion:
+      enabled: true
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+
+service:
+  extensions: [health_check]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheusremotewrite]
+

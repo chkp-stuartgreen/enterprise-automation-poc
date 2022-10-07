@@ -1,0 +1,8 @@
+---
+# tasks file for chkp-add-l7-filtering-policy
+- include_tasks: '{{item}}'
+  loop:
+  - objects/package.yml
+  - objects/access-layer.yml
+  - objects/policy-rules.yml
+  - objects/publish.yml

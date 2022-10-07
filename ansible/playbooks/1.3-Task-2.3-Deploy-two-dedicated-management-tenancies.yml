@@ -1,0 +1,15 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ../roles/inventory
+
+- name:  Build redundant domain A and B
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  roles:
+  - role: ../roles/chkp-add-domain

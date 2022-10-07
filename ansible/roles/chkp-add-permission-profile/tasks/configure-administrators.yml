@@ -1,0 +1,30 @@
+---
+- name: Add admin web-admin and set permissions
+  check_point.mgmt.cp_mgmt_administrator:
+    name: web-admin
+    password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    authentication_method: check point password
+    must_change_password: false
+    multi_domain_profile: Domain Level Only
+    permissions_profile_list:
+    -  domain: domain-b
+       profile: Web Layer manager
+    color: blue
+    auto_publish_session: false
+    state: present
+  notify: Publish handler
+
+- name: Add admin guest-admin and set permissions
+  check_point.mgmt.cp_mgmt_administrator:
+    name: guest-admin
+    password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    authentication_method: check point password
+    must_change_password: false
+    multi_domain_profile: Domain Level Only
+    permissions_profile_list:
+    -  domain: domain-b
+       profile: Guest Layer manager
+    color: sea green
+    auto_publish_session: false
+    state: present
+  notify: Publish handler

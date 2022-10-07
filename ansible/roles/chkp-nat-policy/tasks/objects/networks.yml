@@ -1,0 +1,19 @@
+---
+# Add or delete network object in Check Point management server
+- name: add-network or delete-network
+  check_point.mgmt.cp_mgmt_network:
+    state: present
+    color: "{{item.color}}"
+    groups: "{{item.groups}}"
+    name: "{{item.name}}"
+    subnet: "{{ item.subnet | ansible.utils.ipaddr('network') }}"
+    subnet_mask: "{{ item.subnet | ansible.utils.ipaddr('netmask') }}"
+  notify: Publish and install handler
+  loop:
+  # List of networks to add
+  - { state: present, name: 'Prod Net', subnet: 172.21.22.0/24, groups: ["internal networks"], color: forest green}
+  - { state: present, name: 'Test Net', subnet: 192.168.24.0/24, groups: ["internal networks"], color: red}
+  - { state: present, name: 'Stage Net', subnet: 10.1.1.0/24, groups: ["internal networks"], color: orange}
+  - { state: present, name: 'Internal Net', subnet: 50.50.50.0/24, groups: ["internal networks"], color: forest green}
+  - { state: present, name: 'External Net', subnet: 172.23.23.0/24, groups: ["internal networks"], color: red}
+  - { state: present, name: 'Mgmt Net', subnet: 192.168.100.0/24, groups: ["internal networks"], color: blue}

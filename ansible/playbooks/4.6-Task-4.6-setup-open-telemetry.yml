@@ -1,0 +1,23 @@
+---
+
+- name: Copy Open-telemetry agent config
+  hosts: check_point_gateways
+  gather_facts: no
+  tasks:
+    - name: Copy file
+      copy:
+        src: ../../files/config.yaml
+        dest: /opt/CPotelcol/config.yaml
+
+    - name: Replace gateway ID
+      replace:
+        path: /opt/CPotelcol/config.yaml
+        regexp: 'EXTLABELNAME'
+        replace: '{{ ansible_host }}'
+        backup: no
+
+    - name: Stop skyline service
+      raw: /opt/CPviewExporter/stop_skyline
+
+    - name: Start skyline service
+      raw: /opt/CPviewExporter/start_skyline

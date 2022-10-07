@@ -1,0 +1,9 @@
+---
+# tasks file for chkp-add-shared-policy
+- include_tasks: '{{item}}'
+  loop:
+  - objects/simple-gateway.yml
+  - objects/package.yml
+  - objects/policy-rules.yml
+  - objects/policy-rules-sections.yml
+  - objects/publish.yml

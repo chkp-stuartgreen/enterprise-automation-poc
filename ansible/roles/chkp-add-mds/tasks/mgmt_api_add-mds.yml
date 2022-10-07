@@ -1,0 +1,20 @@
+---
+- name: Wait up to 15 minutes for SIC service to be ready to recive certificate
+  wait_for:
+    port: 18221
+    host: "{{ hostvars['poc-mds-b']['ansible_host'] }}"
+    timeout: 900
+  delegate_to: localhost
+
+- name: Add Secondary Multi-Domain Server
+  check_point.mgmt.cp_mgmt_mds:
+    name: poc-mds-b
+    hardware: Smart-1
+    ip_address: "{{ hostvars['poc-mds-b']['ansible_host'] }}"
+    ip_pool_first: 192.168.100.121
+    ip_pool_last: 192.168.100.129
+    one_time_password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    os: gaia
+    color: blue
+    auto_publish_session: True
+    state: present

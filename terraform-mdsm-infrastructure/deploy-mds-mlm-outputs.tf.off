@@ -1,0 +1,15 @@
+# prints all deployed management virtual machines default IP
+output "poc-mds-a_eth0_ip_addresses" {
+  description = "The DHCP address that was assigned to this vm"
+  value = vsphere_virtual_machine.poc-mds-a.vapp[0].properties.ipaddr_v4
+}
+
+output "poc-mds-b_eth0_ip_addresses" {
+  description = "The DHCP address that was assigned to this vm"
+  value = vsphere_virtual_machine.poc-mds-b.vapp[0].properties.ipaddr_v4
+}
+
+output "poc-mlm_eth0_ip_addresses" {
+  description = "The DHCP address that was assigned to this vm"
+  value = vsphere_virtual_machine.poc-mlm.vapp[0].properties.ipaddr_v4
+}

@@ -1,0 +1,5 @@
+- name: add-group, set or delete Check Point group object
+  check_point.mgmt.cp_mgmt_group:
+    state: present
+    name: internal networks
+    color: forest green

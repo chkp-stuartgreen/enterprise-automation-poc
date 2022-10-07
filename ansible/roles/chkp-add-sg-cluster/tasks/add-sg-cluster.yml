@@ -1,0 +1,84 @@
+---
+#Verify that the Security Gateway is ready before creating the object in the management server
+- name: Wait up to 15 minutes for SIC port 18211 to open
+  wait_for:
+    port: 18211
+    host: "{{item.sg_ip}}"
+    delay: 5
+    timeout: 900
+  delegate_to: localhost
+  loop:
+    - sg_ip: 192.168.100.11
+    - sg_ip: 192.168.100.12
+
+#Build Check Point Security Gateways cluster
+- name: configure Check Point Security Gateway Cluster
+  check_point.mgmt.cp_mgmt_simple_cluster:
+    name: cluster1
+    ip_address: 192.168.100.128
+    os_name: Gaia
+    state: "{{state}}"
+    cluster_version: R81.10
+    hardware: CloudGuard IaaS
+#    cluster_mode: cluster-ls-unicast
+    cluster_mode: cluster-xl-ha
+    color: pink
+    firewall: true
+    interfaces:
+    - anti_spoofing: true
+      interface_type: cluster + sync
+      ip_address: 192.168.100.128
+      name: eth0
+      network_mask: 255.255.255.0
+      topology: external
+    - anti_spoofing: true
+      interface_type: cluster
+      ip_address: 50.50.50.128
+      name: eth1
+      network_mask: 255.255.255.0
+      topology: internal
+      topology_settings:
+        interface_leads_to_dmz: false
+        ip_address_behind_this_interface: network defined by the interface ip and net mask
+    - anti_spoofing: true
+      interface_type: cluster
+      ip_address: 60.60.60.128
+      name: eth2
+      network_mask: 255.255.255.0
+      topology: internal
+      topology_settings:
+        interface_leads_to_dmz: false
+        ip_address_behind_this_interface: network defined by the interface ip and net mask
+    members:
+    - interfaces:
+      - ip_address: 192.168.100.11
+        name: eth0
+        network_mask: 255.255.255.0
+      - ip_address: 50.50.50.11
+        name: eth1
+        network_mask: 255.255.255.0
+      - ip_address: 60.60.60.11
+        name: eth2
+        network_mask: 255.255.255.0
+      ip_address: 192.168.100.11
+      name: member1
+      one_time_password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    - interfaces:
+      - ip_address: 192.168.100.12
+        name: eth0
+        network_mask: 255.255.255.0
+      - ip_address: 50.50.50.12
+        name: eth1
+        network_mask: 255.255.255.0
+      - ip_address: 60.60.60.12
+        name: eth2
+        network_mask: 255.255.255.0
+      ip_address: 192.168.100.12
+      name: member2
+      one_time_password: "{{ hostvars['poc-mds-b']['ansible_password'] }}"
+    auto_publish_session: True
+  notify: Publish and install handler
+
+#- name: Print all available facts
+#  ansible.builtin.debug:
+#    msg: "{{ ansible_facts['domain']['name'] }}"

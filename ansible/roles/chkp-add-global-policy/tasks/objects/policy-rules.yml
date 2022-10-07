@@ -1,0 +1,36 @@
+---
+# Add access policy rule {{item.position}} in Check Point management server
+- name: add-access-rule or delete-access-rule tasks
+  check_point.mgmt.cp_mgmt_access_rule:
+    state: "{{state}}"
+    layer: "{{item.layer}}"
+    name: "{{item.name}}"
+    position: "{{item.position}}"
+    source: "{{item.source}}"
+    destination: "{{item.destination}}"
+    service: "{{item.service}}"
+    action: "{{item.action}}"
+    track:
+      type: "{{item.track_type}}"
+  notify: Publish and install handler
+  loop:
+  # List of rules to add
+  - { state: present, layer: overarching_ent_lvl_pol Network,  name: Access to common network services on DMZ,
+    position: 1,  source: g-Internal-net-55, destination: ["g-DMZ-net-111"], service: ["dns", "ntp"], action: Accept, track_type: log 
+    }
+  - { state: present, layer: overarching_ent_lvl_pol Network, name: Exchange mail access, 
+    position: 2, source: ["g-Internal-net-55"], destination: g-exchange-mail, service: ["MSexchange"], action: Accept, track_type: log 
+    }
+  - { state: present, layer: overarching_ent_lvl_pol Network, name: Allow mail server to send mail, 
+    position: 3, source: g-exchange-mail, destination: Any, service: ["smtp"], action: Accept, track_type: log 
+    }
+  - { state: present, layer: overarching_ent_lvl_pol Network, name: Allow mail server to recive mail, 
+    position: 4, source: Any, destination: g-exchange-mail, service: ["smtp"], action: Accept, track_type: log 
+    }
+  - { state: present, layer: overarching_ent_lvl_pol Network, name: Block internals to bypass DMZ, 
+    position: 5, source: ["g-Internal-net-55"], destination: Any, service: ["dns", "ntp", "MSExchange"], action: Drop, track_type: log 
+    }
+  # Enable log on the existing cleanup rule
+  - { state: present, layer: overarching_ent_lvl_pol Network, name: Cleanup rule, 
+    position: 7, source: Any, destination: ["Any"], service: ["Any"], action: Drop, track_type: log 
+    }

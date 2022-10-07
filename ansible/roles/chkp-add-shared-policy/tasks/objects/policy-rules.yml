@@ -1,0 +1,133 @@
+- name: 'task for rule with Position: 1'
+  check_point.mgmt.cp_mgmt_access_rule:
+    layer: Shared_Policy Network
+    name: Administrator Access to Gateways
+    position: 1
+    source:
+    - Admins
+    source_negate: false
+    destination:
+    - BranchOffice
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: false
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Accept
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - Manage Services
+    action_settings:
+      enable_identity_captive_portal: false
+- name: 'task for rule with Position: 2'
+  check_point.mgmt.cp_mgmt_access_rule:
+    layer: Shared_Policy Network
+    name: DHCP Server for the branch Office
+    position: 2
+    source:
+    - Any
+    source_negate: false
+    destination:
+    - BranchOffice
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: false
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Accept
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service:
+    - dhcp-request
+    
+    action_settings:
+      enable_identity_captive_portal: false
+- name: 'task for rule with Position: 3'
+  check_point.mgmt.cp_mgmt_access_rule:
+    layer: Shared_Policy Network
+    name: Stealth rule
+    position: 3
+    source:
+    - Any
+    source_negate: false
+    destination:
+    - BranchOffice
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: Log
+      per_session: false
+      per_connection: true
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Drop
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service: Any
+
+- name: 'task for rule with Position: 4'
+  check_point.mgmt.cp_mgmt_access_rule:
+    layer: Shared_Policy Network
+    name: Wireless Guests access shared layer
+    position: 4
+    source:
+    - Wireless Guests Network
+    source_negate: false
+    destination:
+    - Any
+    destination_negate: false
+    service_negate: false
+    content_direction: any
+    content_negate: false
+    track:
+      type: None
+      per_session: false
+      per_connection: false
+      accounting: false
+      enable_firewall_session: false
+      alert: none
+    action: Apply Layer
+    inline_layer: Guest Exception Layer
+    comments: ''
+    custom_fields:
+      field_1: ''
+      field_2: ''
+      field_3: ''
+    enabled: true
+    install_on:
+    - Policy Targets
+    service: Any

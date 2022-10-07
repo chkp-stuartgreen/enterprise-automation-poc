@@ -1,0 +1,15 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  roles:
+    - role: ../roles/inventory
+
+- name:  Build domain log server for domain a
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: no
+  roles:
+  - role: ../roles/chkp-add-dls

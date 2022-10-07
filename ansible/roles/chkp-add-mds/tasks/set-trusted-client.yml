@@ -1,0 +1,10 @@
+---
+- name: Set trusted client
+  check_point.mgmt.cp_mgmt_trusted_client:
+    name: AnyHost
+    state: present
+    type: any
+    domains_assignment: All Domains
+
+- name: publish
+  check_point.mgmt.cp_mgmt_publish:

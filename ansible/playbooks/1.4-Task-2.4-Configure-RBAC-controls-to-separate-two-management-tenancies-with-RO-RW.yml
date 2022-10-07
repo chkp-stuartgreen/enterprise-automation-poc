@@ -1,0 +1,15 @@
+# ansible-playbook configure-mlm.yml
+---
+- name: Build inventory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: ../roles/inventory
+
+- name:  configure RBAC for specific domains
+  hosts: poc-mds-a
+  connection: httpapi
+  gather_facts: false
+  roles:
+  - role: ../roles/chkp-set-mgmt-rbac

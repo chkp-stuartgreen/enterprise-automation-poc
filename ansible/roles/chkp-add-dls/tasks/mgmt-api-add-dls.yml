@@ -1,0 +1,19 @@
+---
+#- name: Check if domain-a exsists
+#  check_point.mgmt.cp_mgmt_domain_facts:
+#    name: domain-a
+
+- name: Add domain log server to domain a
+  check_point.mgmt.cp_mgmt_set_domain:
+    name: domain-a
+    servers:
+      add:
+      - name: domain-a-logserver
+        ip_address: 192.168.100.131
+        multi_domain_server: poc-mlm
+        type: log server
+ # when: ansible_facts['domain']['name'] is not defined
+
+#- name: Print all available facts
+#  ansible.builtin.debug:
+#    msg: "{{ ansible_facts['domain']['name'] }}"

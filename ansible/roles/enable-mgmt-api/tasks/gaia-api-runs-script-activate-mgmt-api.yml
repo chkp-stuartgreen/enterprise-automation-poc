@@ -1,0 +1,13 @@
+---
+#- name: Show current hostname
+#  check_point.gaia.cp_gaia_hostname_facts:
+
+- name: Run script
+  check_point.gaia.cp_gaia_run_script:
+    script: api restart; mgmt_cli set api-settings accepted-api-calls-from 'All IP addresses' --domain 'System Data' --format json --root true; api reconf
+    description: set mgmt_api to listen to any
+    wait_for_task: True
+  register: api_task
+
+- debug:
+    msg: "{{ api_task.run_script.tasks[0]['task-details'][0]['output'] | b64decode }}"
